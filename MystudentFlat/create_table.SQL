@@ -2,7 +2,7 @@
 CREATE DATABASE MystudentFlat;
 use MystudentFlat;
 -- Create the table appartment(Parent)
-CREATE TABLE appartment (Flat_id INT PRIMARY KEY AUTO_INCREMENT, name VARCHAR(255), price INT, ref INT, description TEXT, Square_meter INT, Adress VARCHAR(255), Postal_code INT, url VARCHAR(255));
+CREATE TABLE appartment (Flat_id INT PRIMARY KEY AUTO_INCREMENT, name VARCHAR(255), price INT, ref VARCHAR(20), description TEXT, square_meter FLOAT, adress VARCHAR(255), Postal_code INT, url VARCHAR(255));
 -- Create the table lease, rent and charges
 CREATE TABLE lease_rent_charges (Rent_id INT PRIMARY KEY, FOREIGN KEY (Rent_id) REFERENCES appartment(Flat_id) ON DELETE CASCADE, Type_of_lease VARCHAR(256), Lease_duration VARCHAR(255), Rent_charges VARCHAR(255), Additional_rent VARCHAR(255), Tenant_fess VARCHAR(255), Charge_provision VARCHAR(255), Check_in_fees VARCHAR(255), Security_deposit VARCHAR(255), Availability VARCHAR(255));
 -- Create the table Building characteristics
