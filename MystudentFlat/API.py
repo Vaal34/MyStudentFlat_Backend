@@ -13,7 +13,7 @@ mysql = MySQL(app)
 @app.route("/appartments", methods=['GET'], strict_slashes=False)
 def get_flats():
     cur = mysql.connection.cursor()
-    cur.execute('''SELECT * FROM flats''')
+    cur.execute('''SELECT * FROM appartment''')
     results = cur.fetchall()
     colonne_names = [i[0] for i in cur.description] # Take all name of the colonne
     flats = [dict(zip(colonne_names, row)) for row in results] # Create a dictionary for each row and add column names as keys
