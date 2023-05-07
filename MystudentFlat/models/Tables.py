@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Text, ForeignKey, create_engine
+from sqlalchemy import Column, Integer, String, Text, ForeignKey, Float, create_engine
 from sqlalchemy.orm import relationship, declarative_base
 
 Base = declarative_base()
@@ -9,10 +9,10 @@ class Appartment(Base):
     flat_id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(255))
     price = Column(Integer)
-    ref = Column(Integer)
+    ref = Column(String(20))
     description = Column(Text)
-    square_meter = Column(Integer)
-    address = Column(String(255))
+    square_meter = Column(Float)
+    adress = Column(String(255))
     postal_code = Column(Integer)
     url = Column(String(255))
 
@@ -31,8 +31,6 @@ class AdditionalSurfaces(Base):
     Cellar = Column(Integer)
     Private_parking = Column(Integer)
 
-    appartment = relationship('Appartment', backref='additional_surfaces')
-
 class Amenities(Base):
     __tablename__ = 'amenities'
     
@@ -44,8 +42,6 @@ class Amenities(Base):
     Washing_machine_connection = Column(String(5))
     Ventilation_system = Column(String(5))
     TV_antenna = Column(String(5))
-
-    appartment = relationship('Appartment', backref='amenities')
 
 class BuildingCharacteristics(Base):
     __tablename__ = 'building_characteristics'
@@ -59,8 +55,6 @@ class BuildingCharacteristics(Base):
     Elevator = Column(String(5))
     Green_peaces = Column(String(5))
     
-    appartment = relationship('Appartment', backref='building_characteristics')
-
 class LeaseRentCharges(Base):
     __tablename__ = 'lease_rent_charges'
     
@@ -76,17 +70,12 @@ class LeaseRentCharges(Base):
     security_deposit = Column(String(255))
     availability = Column(String(255))
     
-    appartment = relationship('Appartment', backref='lease_rent_charges')
-
 class Pictures(Base):
     __tablename__ = 'pictures'
     
     picture_id = Column(Integer, primary_key=True, autoincrement=True)
     flat_id = Column(Integer, ForeignKey('appartment.flat_id'))
-    picture_id = Column(Integer, primary_key=True)
     url_picture = Column(String(255))
-
-    appartment = relationship('Appartment', backref='pictures')
 
 class PropertyCharacteristics(Base):
     __tablename__ = 'property_characteristics'
@@ -103,4 +92,3 @@ class PropertyCharacteristics(Base):
     Heating_system = Column(String(45))
     Double_glazing = Column(String(45))
     
-    appartment = relationship('Appartment', backref='property_characteristics')
