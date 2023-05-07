@@ -1,3 +1,6 @@
+
+CREATE DATABASE MystudentFlat;
+use MystudentFlat;
 -- Create the table appartment(Parent)
 CREATE TABLE appartment (Flat_id INT PRIMARY KEY AUTO_INCREMENT, name VARCHAR(255), price INT, ref INT, description TEXT, Square_meter INT, Adress VARCHAR(255), Postal_code INT, url VARCHAR(255));
 -- Create the table lease, rent and charges
