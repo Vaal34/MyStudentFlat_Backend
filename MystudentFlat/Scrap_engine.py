@@ -24,3 +24,9 @@ def get_allPages():
             url = baliseHTML.find("a", {"class": "gallery-container"}).get("href") # retrives all urls
             all_urls.append("https://fr.foncia.com" + url) # append and create url in the list
     return all_urls # return all urls in a list
+
+def get_element(pageHTML, className, element_target):
+    Part_HTML = pageHTML.find("div", {"class": className}) if pageHTML.find("div", {"class": className}) else None
+    balise_before_info = Part_HTML.find('span', string=element_target).previous_element if Part_HTML.find('span', string=element_target) else None
+    if balise_before_info:
+        return balise_before_info.next_sibling.text.strip()
