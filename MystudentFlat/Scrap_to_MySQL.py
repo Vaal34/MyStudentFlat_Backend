@@ -173,7 +173,7 @@ def get_allTables():
     """ Scrap all information of all Flats """
     all_urlFlat = get_allPages() # Call the list of all urls
     count = 1
-    for urlpage in all_urlFlat[137:]: # Loop in list of urls
+    for urlpage in all_urlFlat: # Loop in list of urls
         response = requests.get(urlpage) # Send a GET request to URL and retrieve the page content
         pagesHTML = BeautifulSoup(response.content, "html.parser") # Parse the HTML content
         for noNeed in pagesHTML.find_all(['script', 'style']): # Remove all balise <script> and <style>
