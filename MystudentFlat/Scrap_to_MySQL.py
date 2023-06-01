@@ -2,14 +2,14 @@ from selenium import webdriver # Importation du module Selenium
 from selenium.webdriver.common.by import By # Importation du module By pour les éléments du navigateur
 from selenium.webdriver.chrome.options import Options # Importation du module Service pour le service Chrome
 import datetime
-import requests, time
+import requests
 from bs4 import BeautifulSoup
 from sqlalchemy import create_engine, inspect
 from sqlalchemy.orm import sessionmaker, scoped_session
 from models.Tables import Appartment, Pictures, Base, AdditionalSurfaces, Amenities, BuildingCharacteristics, LeaseRentCharges, PropertyCharacteristics
 from Scrap_engine import get_allPages, get_element
-from selenium.webdriver.common.action_chains import ActionChains
 import json
+from sys import argv
 
 # Selenium and Chrome Driver options
 chrome_options = Options()
@@ -184,4 +184,21 @@ def get_allTables():
         session.commit() # Commit the changes to the database
     session.close() # Close the current session
 
-get_allTables()
+def verify_if_appart_exist():
+    """ delete if a url dosn't exist"""
+    all_url = get_allPages()
+    list_url_404 = []
+    for url in all_url: # check if url is wrong 
+        response = requests.get(url)
+        if response.status_code in [404, 410]:
+            list_url_404.append(url)
+    for url404 in list_url_404: # delete all url wrong in the DB
+        print(f"Appartment n'existant plus {url404}")
+        session.query(Appartment).filter_by(url=url404).delete()
+        session.commit()
+    session.close
+
+if argv[1] == "check":
+    verify_if_appart_exist()
+elif argv[1] == "add":
+    get_allTables()

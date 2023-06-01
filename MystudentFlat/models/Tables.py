@@ -38,7 +38,7 @@ class AdditionalSurfaces(Base):
     __tablename__ = 'additional_surfaces'
 
     id = Column(Integer, primary_key=True)
-    flat_id = Column(Integer, ForeignKey("appartment.id"))
+    flat_id = Column(Integer, ForeignKey("appartment.id", ondelete='CASCADE'))
     Cellar = Column(String(50))
     Private_parking = Column(String(50))
     appart_table = relationship("Appartment", back_populates="additional_table")
@@ -47,7 +47,7 @@ class Amenities(Base):
     __tablename__ = 'amenities'
     
     amenities_id = Column(Integer, primary_key=True)
-    flat_id = Column(Integer, ForeignKey('appartment.id'))
+    flat_id = Column(Integer, ForeignKey('appartment.id', ondelete='CASCADE'))
     Bathtub = Column(String(15))
     Kitchen_sink = Column(String(20))
     Washbasin = Column(String(15))
@@ -61,7 +61,7 @@ class BuildingCharacteristics(Base):
     __tablename__ = 'building_characteristics'
     
     building_charac_id = Column(Integer, primary_key=True, autoincrement=True)
-    flat_id = Column(Integer, ForeignKey('appartment.id'))
+    flat_id = Column(Integer, ForeignKey('appartment.id', ondelete='CASCADE'))
     Year_of_construction = Column(Integer)
     Number_of_Floor = Column(Integer)
     Digicode = Column(String(15))
@@ -76,7 +76,7 @@ class LeaseRentCharges(Base):
     __tablename__ = 'lease_rent_charges'
     
     rent_id = Column(Integer, primary_key=True)
-    flat_id = Column(Integer, ForeignKey('appartment.id'))
+    flat_id = Column(Integer, ForeignKey('appartment.id', ondelete='CASCADE'))
     type_of_lease = Column(String(256))
     lease_duration = Column(String(255))
     rent_charges = Column(String(255))
@@ -92,7 +92,7 @@ class PropertyCharacteristics(Base):
     __tablename__ = 'property_characteristics'
     
     proper_charac_id = Column(Integer, primary_key=True)
-    flat_id = Column(Integer, ForeignKey('appartment.id'))
+    flat_id = Column(Integer, ForeignKey('appartment.id', ondelete='CASCADE'))
     Floor = Column(String(10))
     Total_area = Column(Float)
     Living_area = Column(Float)
