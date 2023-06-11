@@ -1,14 +1,17 @@
 from flask import Flask, jsonify
 from flask_mysqldb import MySQL
+from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)
 
+app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
+app.config['JSON_AS_ASCII'] = False
 app.config["MYSQL_USER"] = "root"
 app.config["MYSQL_PASSWORD"] = "root"
 app.config["MYSQL_DB"] = "MystudentFlat_test"
-app.config["MYSQL_DATABASE_PORT"] = 80
-app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
-app.config['JSON_AS_ASCII'] = False
+
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 mysql = MySQL(app)
 
@@ -38,6 +41,7 @@ def get_all_flats():
     return jsonify(list_all_flats)
 
 @app.route("/appartment/<id>", methods=['GET'], strict_slashes=False)
+@cross_origin()
 def get_flat(id):
     cur = mysql.connection.cursor()
 
