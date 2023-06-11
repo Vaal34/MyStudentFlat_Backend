@@ -83,11 +83,17 @@ def get_table_informations(url, session, pageHTML):
     session.add(appart_table) # add appart to the current session
     session.commit()
     get_table_picture(session, pageHTML, appart_table) # Function thah get all pictures    
+    print("pictures")
     get_table_additionalsurfaces(pageHTML, session, appart_table)
+    print("additional")
     get_table_amenities(pageHTML, session, appart_table)
+    print("amenities")
     get_table_building_charac(pageHTML, session, appart_table)
+    print("buildingcharac")
     get_table_lease_rent(pageHTML, session, appart_table)
+    print("rent")
     get_table_PropertyCharac(pageHTML, session, appart_table)
+    print("property")
 
 def get_table_picture(session, pageHTML, appart_table):
     """ Get all pictures"""
@@ -96,8 +102,11 @@ def get_table_picture(session, pageHTML, appart_table):
     
         imgHTML = PictureSection.find_all("img", class_="photo")
         srcFirstImage = imgHTML[0]["src"]
+        print("1er image")
         src2ndImage = imgHTML[1]["src"] if len(imgHTML) > 1 else None
+        print("2eme image")
         src3rdImage = imgHTML[2]["src"] if len(imgHTML) > 2 else None
+        print("3eme image")
         JSONpicture = [srcFirstImage, src2ndImage, src3rdImage]
         JSONpicture = json.dumps(JSONpicture)
     else:
@@ -173,7 +182,7 @@ def get_allTables():
     """ Scrap all information of all Flats """
     all_urlFlat = get_allPages() # Call the list of all urls
     count = 1
-    for urlpage in all_urlFlat: # Loop in list of urls
+    for urlpage in all_urlFlat[129:]: # Loop in list of urls
         response = requests.get(urlpage) # Send a GET request to URL and retrieve the page content
         pagesHTML = BeautifulSoup(response.content, "html.parser") # Parse the HTML content
         for noNeed in pagesHTML.find_all(['script', 'style']): # Remove all balise <script> and <style>
@@ -188,8 +197,11 @@ def verify_if_appart_exist():
     """ delete if a url dosn't exist"""
     all_url = get_allPages()
     list_url_404 = []
+    count = 0
     for url in all_url: # check if url is wrong 
         response = requests.get(url)
+        count += 1
+        print(count)
         if response.status_code in [404, 410]:
             list_url_404.append(url)
     for url404 in list_url_404: # delete all url wrong in the DB
