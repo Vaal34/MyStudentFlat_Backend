@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 
 def get_number_pages():
     """ get the number of existing pages """
-    url = "https://fr.foncia.com/location/toulouse-31?prix=--800&advanced=" # URL page 1
+    url = "https://fr.foncia.com/location/toulouse-31/appartement?prix=--800&advanced=" # URL page 1
     response = requests.get(url)
     soup = BeautifulSoup(response.content, "html.parser")
     links = soup.find("ol") # Get <ol> balise in HTML of the pages
