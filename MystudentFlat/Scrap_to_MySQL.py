@@ -31,7 +31,7 @@ def get_table_informations(url, session, pageHTML):
     
     # Name
     # Extract the text of the first <h1> element with class "section-title", or set Name to None if no html is found
-    Name = Flat.select_one('h1.section-title').text if Flat.select_one('h1.section-title') else None
+    Name = Flat.find("h1", {"class": "section-title"}).text if Flat.find("h1", {"class": "section-title"}) else None
     
     # Description
     # Extract the text of the first <p> element with class "section-description", or set Description to None if no html is found
@@ -97,20 +97,33 @@ def get_table_informations(url, session, pageHTML):
 
 def get_table_picture(session, pageHTML, appart_table):
     """ Get all pictures"""
-    if pageHTML.find("div", {"class", "photos"}):
-        PictureSection = pageHTML.find("div", {"class", "photos"})
-    
-        imgHTML = PictureSection.find_all("img", class_="photo")
+    JSONpicture = []
+    PictureSection = pageHTML.find("div", {"class", "card"})
+
+    imgHTML = PictureSection.find_all("img", class_="photo")
+    if len(imgHTML) != 0:
         srcFirstImage = imgHTML[0]["src"]
-        print("1er image")
-        src2ndImage = imgHTML[1]["src"] if len(imgHTML) > 1 else None
-        print("2eme image")
-        src3rdImage = imgHTML[2]["src"] if len(imgHTML) > 2 else None
-        print("3eme image")
-        JSONpicture = [srcFirstImage, src2ndImage, src3rdImage]
-        JSONpicture = json.dumps(JSONpicture)
+        response = requests.get(srcFirstImage)
+        if response.status_code != 500:
+            JSONpicture.append(srcFirstImage)
+        
+        if len(imgHTML) > 1:
+            src2ndImage = imgHTML[1]["src"] 
+            response = requests.get(src2ndImage)
+            if response.status_code != 500:
+                JSONpicture.append(src2ndImage)
+        
+        if len(imgHTML) > 2:
+            src3rdImage = imgHTML[2]["src"] 
+            response = requests.get(src3rdImage)
+            if response.status_code != 500:
+                JSONpicture.append(src3rdImage)
+    
     else:
-        JSONpicture = None
+        JSONpicture.append("")
+    print(JSONpicture)
+    JSONpicture = json.dumps(JSONpicture)
+    
     table_picture = Pictures(flat_id=appart_table.id, URL_picture=JSONpicture)
     session.add(table_picture)
 
@@ -182,11 +195,9 @@ def get_allTables():
     """ Scrap all information of all Flats """
     all_urlFlat = get_allPages() # Call the list of all urls
     count = 1
-    for urlpage in all_urlFlat[129:]: # Loop in list of urls
+    for urlpage in all_urlFlat[::-1]: # Loop in list of urls
         response = requests.get(urlpage) # Send a GET request to URL and retrieve the page content
         pagesHTML = BeautifulSoup(response.content, "html.parser") # Parse the HTML content
-        for noNeed in pagesHTML.find_all(['script', 'style']): # Remove all balise <script> and <style>
-            noNeed.decompose()
         get_table_informations(url=urlpage, session=session, pageHTML=pagesHTML) # Function that get information for on flats
         print(f"élement ajouter a la database {count} {urlpage}")
         count += 1
@@ -202,7 +213,12 @@ def verify_if_appart_exist():
         response = requests.get(url)
         count += 1
         print(count)
-        if response.status_code in [404, 410]:
+        print(url)
+        soup = BeautifulSoup(response.content, "html.parser")
+        error = soup.select_one('h1.error-message-title').text() if soup.select_one('h1.error-message-title') else None
+        if error == "Cette annonce n’est plus disponible.":
+            list_url_404.append(url)
+        elif response.status_code in [404, 410]:
             list_url_404.append(url)
     for url404 in list_url_404: # delete all url wrong in the DB
         print(f"Appartment n'existant plus {url404}")
@@ -210,7 +226,33 @@ def verify_if_appart_exist():
         session.commit()
     session.close
 
+def add_new_flat():
+    """ add new flat in the database """
+    all_url = get_allPages()
+    for url in all_url:
+        check_url = session.query(Appartment).filter_by(url=url).first()
+        if check_url is None:
+            print(url)
+            response = requests.get(url) # Send a GET request to URL and retrieve the page content
+            pagesHTML = BeautifulSoup(response.content, "html.parser") # Parse the HTML content
+            get_table_informations(url=url, session=session, pageHTML=pagesHTML)
+            session.commit()
+        else:
+            pass
+        session.close()
+
 if argv[1] == "check":
     verify_if_appart_exist()
+    print("verify check")
 elif argv[1] == "add":
     get_allTables()
+elif argv[1] == "add_new":
+    add_new_flat()
+    print("add_new")
+
+"""
+import os
+dir = os.path.dirname(os.path.realpath(__file__))
+filename = os.path.join(dir, 'Scrap_to_Mysql.py')
+print(filename)
+"""
